@@ -1,0 +1,80 @@
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f0f0f0; /* Light gray background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* Full viewport height */
+  margin: 0;
+}
+
+.app-container {
+  background-color: #fff; /* White background for the container */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+  text-align: center; /* Center text within the container */
+}
+
+h1, h2 {
+  color: #3498db; /* Blue color for headings */
+}
+
+select {
+  padding: 10px;
+  margin: 10px 0;
+  background-color: #3498db; /* Blue background for the select */
+  color: #fff; /* White text color for the select options */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+select:hover {
+  background-color: #2980b9; /* Darker blue on hover */
+}
+
+button {
+  background-color: #3498db; /* Blue background for the button */
+  color: #fff; /* White text color for the button */
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #2980b9; /* Darker blue on hover */
+}
+
+p {
+  line-height: 1.5;
+}
+
+span {
+  display: block;
+  margin-bottom: 8px;
+  transition: background-color 0.3s ease;
+}
+
+span:hover {
+  background-color: #ecf0f1; /* Light gray on hover */
+}
+
+span.yellow-background {
+  background-color: #f39c12; /* Orange color for the yellow background */
+}
+
+.circular-button {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%; /* Makes the button circular */
+  background-color: #4CAF50; /* Change color as desired */
+  color: white;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer; /* Indicate clickable element */
+}
