@@ -1,31 +1,42 @@
 import "./Lyrics.css";
 import React, { useState, useEffect } from "react";
 import Main from "./Main.tsx";
+import levenshtein from "fast-levenshtein";
 
 const Lyrics = () => {
   const [currentLine, setCurrentLine] = useState(0);
   const [song, setSong] = useState(null);
   const [tapCount, setTapCount] = useState(0);
-  const [audioRef] = useState(React.createRef()); // Create a reference for the audio element
+  const [audioRef] = useState(React.createRef());
+  const [recognizedText, setRecognizedText] = useState("");
+  const [scores, setScores] = useState([]);
+  const [finalScore, setFinalScore] = useState(null);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentLine((currentLine) => currentLine + 1);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [currentLine]);
+    if (song && currentLine < lyrics.find((lyric) => lyric.title === song).lyrics.length) {
+      const interval = setInterval(() => {
+        setCurrentLine((line) => line + 1);
+      }, 3000);
+      return () => clearInterval(interval);
+    } else if (song && currentLine >= lyrics.find((lyric) => lyric.title === song).lyrics.length) {
+      // Calculate final score after song ends
+      const averageScore = (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(2);
+      setFinalScore(averageScore);
+    }
+  }, [currentLine, song, scores]);
 
   const handleChange = (event) => {
     setSong(event.target.value);
     setCurrentLine(0);
+    setScores([]);
+    setFinalScore(null);
 
-    // Play audio when Twinkle, Twinkle, Little Star is selected
     if (event.target.value === "Twinkle, Twinkle, Little Star") {
       const audioElement = audioRef.current;
       if (audioElement) {
-        audioElement.src = "C:\\Users\\slssg\\OneDrive\\Documents\\SingSync\\sing-sync\\src\\Twinkle.mp3"; // Set audio source
-        audioElement.load(); // Load the audio file
-        audioElement.play(); // Play the audio
+        audioElement.src = "C:\\Users\\slssg\\OneDrive\\Documents\\SingSync\\sing-sync\\src\\Twinkle.mp3";
+        audioElement.load();
+        audioElement.play();
       }
     }
   };
@@ -33,7 +44,19 @@ const Lyrics = () => {
   const handleTap = () => {
     setTapCount(tapCount + 1);
   };
-  
+
+  // Compare recognized text with the actual lyrics and calculate match percentage
+  const compareWithLyrics = (line) => {
+    const distance = levenshtein.get(line.toLowerCase(), recognizedText.toLowerCase());
+    const similarityPercentage = ((1 - distance / Math.max(line.length, recognizedText.length)) * 100).toFixed(2);
+
+    // Only add score for the current line once
+    if (currentLine === scores.length) {
+      setScores([...scores, parseFloat(similarityPercentage)]);
+    }
+
+    return similarityPercentage;
+  };
 
   const lyrics = [
     {
@@ -60,11 +83,10 @@ const Lyrics = () => {
     },
   ];
 
-
   return (
     <div className="app-container">
       <h1>Sing Sync</h1>
-      <Main />
+      <Main setRecognizedText={setRecognizedText} />
       <select className="song-select" onChange={handleChange}>
         <option value="">Select a song</option>
         {lyrics.map((lyric) => (
@@ -84,10 +106,16 @@ const Lyrics = () => {
                   key={line}
                   className={index === currentLine ? "yellow-background" : ""}
                 >
-                  {line}
+                  {line} - 
+                  {index === currentLine ? ` ${compareWithLyrics(line)}% match` : ""}
                 </span>
               ))}
           </p>
+          {finalScore && (
+            <div className="score-container">
+              <h3>Final Score: {finalScore}%</h3>
+            </div>
+          )}
         </div>
       )}
       <div className="tap-container">
@@ -98,6 +126,4 @@ const Lyrics = () => {
     </div>
   );
 }
-
-
 export default Lyrics;
